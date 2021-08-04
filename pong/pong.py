@@ -1,8 +1,13 @@
 import random
+
 import pygame, sys
 
 pygame.init()
 clock = pygame.time.Clock()
+
+gamestate = 1
+playerscore = 0
+botscore = 0
 
 screen_width = 1280
 screen_height = 800
@@ -40,7 +45,7 @@ def input():
 
 
 def ballmovement():
-    global ballspeedx, ballspeedy
+    global ballspeedx, ballspeedy, botscore, playerscore
     # movement
     ball.x += ballspeedx
     ball.y += ballspeedy
@@ -49,7 +54,12 @@ def ballmovement():
     if ball.top <= 0 or ball.bottom >= screen_height:
         ballspeedy *= -1
 
-    if ball.left <= 0 or ball.right >= screen_width:
+    if ball.left <= 0:
+        botscore += 1
+        ballrestart()
+
+    if ball.right >= screen_width:
+        playerscore += 1
         ballrestart()
 
     if ball.colliderect(player) or ball.colliderect(bot):
@@ -84,23 +94,73 @@ def botmovement():
         bot.bottom = screen_height
 
 
-def draw():
-    screen.fill(bg_color)
+def drawplaying():
+    global playerscore, botscore
+
+    pygame.draw.aaline(screen, light_grey, (screen_width / 2, 0), (screen_width / 2, screen_height))
+    # scoreboard
+    font = pygame.font.SysFont('arial.ttf', 40)
+    scoreboard = font.render('SCORE', True, light_grey, bg_color)
+    scoreboardRect = scoreboard.get_rect()
+    scoreboardRect.center = (screen_width // 2, 20)
+    screen.blit(scoreboard, scoreboardRect)
+
+    playerscoredisplay = font.render(str(playerscore), True, light_grey, bg_color)
+    playerscoredisplay_rect = playerscoredisplay.get_rect()
+    playerscoredisplay_rect.center = (screen_width // 2 - 80, 20)
+    screen.blit(playerscoredisplay, playerscoredisplay_rect)
+
+    botscoredisplay = font.render(str(botscore), True, light_grey, bg_color)
+    botscoredisplay_rect = botscoredisplay.get_rect()
+    botscoredisplay_rect.center = (screen_width // 2 + 80, 20)
+    screen.blit(botscoredisplay, botscoredisplay_rect)
+
     pygame.draw.rect(screen, light_grey, player)
     pygame.draw.rect(screen, light_grey, bot)
     pygame.draw.ellipse(screen, light_grey, ball)
-    pygame.draw.aaline(screen, light_grey, (screen_width / 2, 0), (screen_width / 2, screen_height))
 
 
-while True:
+def drawpaused():
+    print("paused")
+
+
+def drawmenu():
+    print("menu")
+
+
+def game(gamestate):
+    if gamestate == 1:
+        playing()
+    elif gamestate == 2:
+        paused()
+    elif gamestate == 3:
+        menu()
+
+
+def playing():
     input()
-
     ballmovement()
     playermovement()
     botmovement()
+    drawplaying()
 
-    # draw the screen
-    draw()
+
+def paused():
+    input()
+    drawplaying()
+    drawpaused()
+    print("paused")
+
+
+def menu():
+    input()
+    drawmenu()
+    print("menu")
+
+
+while True:
+    screen.fill(bg_color)
+    game(gamestate)
 
     pygame.display.flip()
     clock.tick(60)
