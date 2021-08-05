@@ -10,7 +10,7 @@ playerscore = 0
 botscore = 0
 
 screen_width = 1280
-screen_height = 800
+screen_height = 960
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('pong')
 
@@ -24,6 +24,8 @@ ballspeedx = 6 * random.choice((1, -1))
 ballspeedy = 6 * random.choice((1, -1))
 playerspeed = 0
 botspeed = 7
+
+font = pygame.font.SysFont('arial.ttf', 40)
 
 
 def input():
@@ -62,8 +64,21 @@ def ballmovement():
         playerscore += 1
         ballrestart()
 
-    if ball.colliderect(player) or ball.colliderect(bot):
-        ballspeedx *= -1
+    if ball.colliderect(player) and ballspeedx < 0:
+        if abs(ball.left - player.right) < 10:
+            ballspeedx *= -1
+        elif abs(ball.bottom - player.top) < 10 and ballspeedy > 0:
+            ballspeedy *= -1
+        elif abs(ball.top -player.bottom) < 10 and ballspeedy <0:
+            ballspeedy *= -1
+
+    if ball.colliderect(bot) and ballspeedx > 0:
+        if abs(ball.right - bot.left) < 10:
+            ballspeedx *= -1
+        elif abs(ball.bottom - bot.top) < 10 and ballspeedy > 0:
+            ballspeedy *= -1
+        elif abs(ball.top -bot.bottom) < 10 and ballspeedy <0:
+            ballspeedy *= -1
 
 
 def ballrestart():
@@ -75,9 +90,9 @@ def ballrestart():
 
 def playermovement():
     if player.top <= 0:
-        player.top = 0
+        player.top = 1
     if player.bottom >= screen_height:
-        player.bottom = screen_height
+        player.bottom = screen_height - 2
 
     player.y += playerspeed
 
@@ -99,21 +114,18 @@ def drawplaying():
 
     pygame.draw.aaline(screen, light_grey, (screen_width / 2, 0), (screen_width / 2, screen_height))
     # scoreboard
-    font = pygame.font.SysFont('arial.ttf', 40)
-    scoreboard = font.render('SCORE', True, light_grey, bg_color)
+    scoreboard = font.render("SCORE", True, light_grey, bg_color)
     scoreboardRect = scoreboard.get_rect()
     scoreboardRect.center = (screen_width // 2, 20)
     screen.blit(scoreboard, scoreboardRect)
 
-    playerscoredisplay = font.render(str(playerscore), True, light_grey, bg_color)
-    playerscoredisplay_rect = playerscoredisplay.get_rect()
-    playerscoredisplay_rect.center = (screen_width // 2 - 80, 20)
-    screen.blit(playerscoredisplay, playerscoredisplay_rect)
+    playerscoredisplay = font.render(f"{playerscore}", True, light_grey)
+    scoreboardRect.center = (screen_width // 2 - 60, 20)
+    screen.blit(playerscoredisplay, scoreboardRect)
 
-    botscoredisplay = font.render(str(botscore), True, light_grey, bg_color)
-    botscoredisplay_rect = botscoredisplay.get_rect()
-    botscoredisplay_rect.center = (screen_width // 2 + 80, 20)
-    screen.blit(botscoredisplay, botscoredisplay_rect)
+    botscoredisplay = font.render(f"{botscore}", True, light_grey)
+    scoreboardRect.center = (screen_width // 2 + 140, 20)
+    screen.blit(botscoredisplay, scoreboardRect)
 
     pygame.draw.rect(screen, light_grey, player)
     pygame.draw.rect(screen, light_grey, bot)
