@@ -5,7 +5,7 @@ import pygame, sys
 pygame.init()
 clock = pygame.time.Clock()
 
-gamestate = 1
+gamestate =1
 playerscore = 0
 botscore = 0
 
@@ -29,6 +29,7 @@ font = pygame.font.SysFont('arial.ttf', 40)
 
 
 def input():
+    global gamestate
     global playerspeed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -39,11 +40,17 @@ def input():
                 playerspeed += 7
             if event.key == pygame.K_z:
                 playerspeed -= 7
+            if event.key == pygame.K_ESCAPE:
+                if gamestate == 1:
+                    gamestate = 2
+                if gamestate == 2:
+                    gamestate = 1
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_s:
                 playerspeed -= 7
             if event.key == pygame.K_z:
                 playerspeed += 7
+
 
 
 def ballmovement():
@@ -69,7 +76,7 @@ def ballmovement():
             ballspeedx *= -1
         elif abs(ball.bottom - player.top) < 10 and ballspeedy > 0:
             ballspeedy *= -1
-        elif abs(ball.top -player.bottom) < 10 and ballspeedy <0:
+        elif abs(ball.top - player.bottom) < 10 and ballspeedy < 0:
             ballspeedy *= -1
 
     if ball.colliderect(bot) and ballspeedx > 0:
@@ -77,7 +84,7 @@ def ballmovement():
             ballspeedx *= -1
         elif abs(ball.bottom - bot.top) < 10 and ballspeedy > 0:
             ballspeedy *= -1
-        elif abs(ball.top -bot.bottom) < 10 and ballspeedy <0:
+        elif abs(ball.top - bot.bottom) < 10 and ballspeedy < 0:
             ballspeedy *= -1
 
 
@@ -133,7 +140,10 @@ def drawplaying():
 
 
 def drawpaused():
-    print("paused")
+    paused = font.render("PAUSED", True, light_grey, bg_color)
+    pausedRect = paused.get_rect()
+    pausedRect.center = (screen_width // 2, screen_height//2)
+    screen.blit(paused, pausedRect)
 
 
 def drawmenu():
