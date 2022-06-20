@@ -40,14 +40,14 @@ def input():
                 playerspeed += 7
             if event.key == pygame.K_z:
                 playerspeed -= 7
-            if event.key == pygame.K_p:
+            if event.key == pygame.K_p: #pause
                 if gamestate == 1:
                     gamestate = 2
                     return
                 if gamestate == 2:
                     gamestate = 1
                     return
-            if event.key == pygame.K_ESCAPE:
+            if event.key == pygame.K_ESCAPE: #menu
                 if gamestate == 1 or gamestate == 2:
                     gamestate = 3
                     return
