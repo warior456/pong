@@ -40,16 +40,26 @@ def input():
                 playerspeed += 7
             if event.key == pygame.K_z:
                 playerspeed -= 7
-            if event.key == pygame.K_ESCAPE:
+            if event.key == pygame.K_p:
                 if gamestate == 1:
                     gamestate = 2
+                    return
                 if gamestate == 2:
                     gamestate = 1
+                    return
+            if event.key == pygame.K_ESCAPE:
+                if gamestate == 1 or gamestate == 2:
+                    gamestate = 3
+                    return
+                if gamestate == 3:
+                    gamestate = 1
+                    return
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_s:
                 playerspeed -= 7
             if event.key == pygame.K_z:
                 playerspeed += 7
+
 
 
 
@@ -168,16 +178,13 @@ def playing():
 
 
 def paused():
-    input()
-    drawplaying()
     drawpaused()
-    print("paused")
+    input()
 
 
 def menu():
     input()
     drawmenu()
-    print("menu")
 
 
 while True:
