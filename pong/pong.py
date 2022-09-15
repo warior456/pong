@@ -35,36 +35,42 @@ def input():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_s:
-                playerspeed += 7
-            if event.key == pygame.K_z:
-                playerspeed -= 7
-            if event.key == pygame.K_p: #pause
-                if gamestate == 1:
-                    gamestate = 2
-                    return
-                if gamestate == 2:
-                    gamestate = 1
-                    return
-            if event.key == pygame.K_ESCAPE: #menu
-                if gamestate == 1 or gamestate == 2:
-                    gamestate = 3
-                    return
-                if gamestate == 3:
-                    gamestate = 1
-                    return
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_s:
-                playerspeed -= 7
-            if event.key == pygame.K_z:
-                playerspeed += 7
+        
+        player1input(event)
+        player2input(event)
 
-def player1input()
+
+        if event.key == pygame.K_p: #pause
+            if gamestate == 1:
+                gamestate = 2
+                return
+            if gamestate == 2:
+                gamestate = 1
+                return
+        if event.key == pygame.K_ESCAPE: #menu
+            if gamestate == 1 or gamestate == 2:
+                gamestate = 3
+                return
+            if gamestate == 3:
+                gamestate = 1
+                return
     
 
-def player2input()
-    
+
+def player1input(event):
+    if event.type == pygame.KEYUP:
+        if event.key == pygame.K_a:
+            playerspeed -= 7
+        if event.key == pygame.K_q:
+            playerspeed += 7
+
+
+def player2input(event):
+        if event.key == pygame.K_i:
+            playerspeed -= 7
+        if event.key == pygame.K_k:
+            playerspeed += 7
+
 
 
 def ballmovement():
