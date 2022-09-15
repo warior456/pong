@@ -60,7 +60,11 @@ def input():
             if event.key == pygame.K_z:
                 playerspeed += 7
 
+def player1input()
+    
 
+def player2input()
+    
 
 
 def ballmovement():
@@ -105,7 +109,7 @@ def ballrestart():
     ballspeedx *= random.choice((1, -1))
 
 
-def playermovement():
+def player1movement():
     if player.top <= 0:
         player.top = 1
     if player.bottom >= screen_height:
