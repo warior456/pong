@@ -35,10 +35,9 @@ def input():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        
+
         player1input(event)
         player2input(event)
-
 
         if event.key == pygame.K_p: #pause
             if gamestate == 1:
@@ -58,6 +57,11 @@ def input():
 
 
 def player1input(event):
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_a:
+            playerspeed += 7
+        if event.key == pygame.K_q:
+            playerspeed -= 7
     if event.type == pygame.KEYUP:
         if event.key == pygame.K_a:
             playerspeed -= 7
@@ -66,6 +70,12 @@ def player1input(event):
 
 
 def player2input(event):
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_i:
+            playerspeed -= 7
+        if event.key == pygame.K_k:
+            playerspeed += 7
+    if event.type == pygame.KEYUP:
         if event.key == pygame.K_i:
             playerspeed -= 7
         if event.key == pygame.K_k:
