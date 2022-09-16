@@ -15,14 +15,15 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('pong')
 
 ball = pygame.Rect(screen_width / 2 - 15, screen_height / 2 - 15, 30, 30)
-bot = pygame.Rect(screen_width - 20, screen_height / 2 - 70, 10, 140)
-player = pygame.Rect(10, screen_height / 2 - 70, 10, 140)
+player2 = pygame.Rect(screen_width - 20, screen_height / 2 - 70, 10, 140)
+player1 = pygame.Rect(10, screen_height / 2 - 70, 10, 140)
 bg_color = pygame.Color('gray12')
 light_grey = (200, 200, 200)
 
 ballspeedx = 6 * random.choice((1, -1))
 ballspeedy = 6 * random.choice((1, -1))
-playerspeed = 0
+player1speed = 0
+player2speed = 0
 botspeed = 7
 
 font = pygame.font.SysFont('arial.ttf', 40)
@@ -30,25 +31,28 @@ font = pygame.font.SysFont('arial.ttf', 40)
 
 def input():
     global gamestate
-    global playerspeed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.key == pygame.K_p:  # pause
-            if gamestate == 1:
-                gamestate = 2
-                return
-            if gamestate == 2:
-                gamestate = 1
-                return
-        if event.key == pygame.K_ESCAPE:  # menu
-            if gamestate == 1 or gamestate == 2:
-                gamestate = 3
-                return
-            if gamestate == 3:
-                gamestate = 1
-                return
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:  # pause
+                if gamestate == 1:
+                    gamestate = 2
+                    return
+
+                if gamestate == 2:
+                    gamestate = 1
+                    return
+
+            if event.key == pygame.K_ESCAPE:  # menu
+                if gamestate == 1 or gamestate == 2:
+                    gamestate = 3
+                    return
+                if gamestate == 3:
+                    gamestate = 1
+                    return
 
         player1input(event)
         player2input(event)
@@ -57,29 +61,31 @@ def input():
 
 
 def player1input(event):
+    global player1speed
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_a:
-            playerspeed += 7
+            player1speed -= 7
         if event.key == pygame.K_q:
-            playerspeed -= 7
+            player1speed += 7
     if event.type == pygame.KEYUP:
         if event.key == pygame.K_a:
-            playerspeed -= 7
+            player1speed += 7
         if event.key == pygame.K_q:
-            playerspeed += 7
+            player1speed -= 7
 
 
 def player2input(event):
+    global player2speed
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_i:
-            playerspeed -= 7
+            player2speed -= 7
         if event.key == pygame.K_k:
-            playerspeed += 7
+            player2speed += 7
     if event.type == pygame.KEYUP:
         if event.key == pygame.K_i:
-            playerspeed -= 7
+            player2speed += 7
         if event.key == pygame.K_k:
-            playerspeed += 7
+            player2speed -= 7
 
 
 
@@ -101,20 +107,20 @@ def ballmovement():
         playerscore += 1
         ballrestart()
 
-    if ball.colliderect(player) and ballspeedx < 0:
-        if abs(ball.left - player.right) < 10:
+    if ball.colliderect(player1) and ballspeedx < 0:
+        if abs(ball.left - player1.right) < 10:
             ballspeedx *= -1
-        elif abs(ball.bottom - player.top) < 10 and ballspeedy > 0:
+        elif abs(ball.bottom - player1.top) < 10 and ballspeedy > 0:
             ballspeedy *= -1
-        elif abs(ball.top - player.bottom) < 10 and ballspeedy < 0:
+        elif abs(ball.top - player1.bottom) < 10 and ballspeedy < 0:
             ballspeedy *= -1
 
-    if ball.colliderect(bot) and ballspeedx > 0:
-        if abs(ball.right - bot.left) < 10:
+    if ball.colliderect(player2) and ballspeedx > 0:
+        if abs(ball.right - player2.left) < 10:
             ballspeedx *= -1
-        elif abs(ball.bottom - bot.top) < 10 and ballspeedy > 0:
+        elif abs(ball.bottom - player2.top) < 10 and ballspeedy > 0:
             ballspeedy *= -1
-        elif abs(ball.top - bot.bottom) < 10 and ballspeedy < 0:
+        elif abs(ball.top - player2.bottom) < 10 and ballspeedy < 0:
             ballspeedy *= -1
 
 
@@ -126,24 +132,32 @@ def ballrestart():
 
 
 def player1movement():
-    if player.top <= 0:
-        player.top = 1
-    if player.bottom >= screen_height:
-        player.bottom = screen_height - 2
+    if player1.top <= 0:
+        player1.top = 1
+    if player1.bottom >= screen_height:
+        player1.bottom = screen_height - 2
 
-    player.y += playerspeed
+    player1.y += player1speed
 
 
-def botmovement():
-    if bot.top < ball.y:
-        bot.top += botspeed
-    if bot.bottom > ball.y:
-        bot.bottom -= botspeed
+def player2movement():
+    if player2.top <= 0:
+        player2.top = 1
+    if player2.bottom >= screen_height:
+        player2.bottom = screen_height - 2
 
-    if bot.top <= 0:
-        bot.top = 0
-    if bot.bottom >= screen_height:
-        bot.bottom = screen_height
+    player2.y += player2speed
+
+def bot():
+    if player2.top < ball.y:
+        player2.top += botspeed
+    if player2.bottom > ball.y:
+        player2.bottom -= botspeed
+
+    if player2.top <= 0:
+        player2.top = 0
+    if player2.bottom >= screen_height:
+        player2.bottom = screen_height
 
 
 def drawplaying():
@@ -164,8 +178,8 @@ def drawplaying():
     scoreboardRect.center = (screen_width // 2 + 140, 20)
     screen.blit(botscoredisplay, scoreboardRect)
 
-    pygame.draw.rect(screen, light_grey, player)
-    pygame.draw.rect(screen, light_grey, bot)
+    pygame.draw.rect(screen, light_grey, player1)
+    pygame.draw.rect(screen, light_grey, player2)
     pygame.draw.ellipse(screen, light_grey, ball)
 
 
@@ -177,7 +191,10 @@ def drawpaused():
 
 
 def drawmenu():
-    print("menu")
+    menu = font.render("Menu", True, light_grey, bg_color)
+    menuRect = menu.get_rect()
+    menuRect.center = (screen_width // 2, screen_height//5)
+    screen.blit(menu, menuRect)
 
 
 def game(gamestate):
@@ -192,8 +209,8 @@ def game(gamestate):
 def playing():
     input()
     ballmovement()
-    playermovement()
-    botmovement()
+    player1movement()
+    player2movement()
     drawplaying()
 
 
